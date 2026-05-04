@@ -31,22 +31,9 @@ unzip gb-music.skill -d .claude/skills/gb-music
 Just ask Claude naturally:
 
 - "Create a Hawaiian BGM"
-- "Make bowling sound effects"
+- "Make shoot sound effects"
 - "Convert this MP3 to Game Boy audio"
 - "Generate a game over jingle"
-
-## Supported Genres
-
-| Genre | Example Key | Tempo |
-|-------|-------------|-------|
-| Beach / Hawaiian | C, F major | 6-8 |
-| Rock / Band | A, E minor | 4-5 |
-| Tropical | F major | 6-7 |
-| Shooting | E minor | 3-4 |
-| Swimming | F minor | 4 |
-| Boss Battle | D minor | 3-4 |
-| Bowling / Funk | Eb major | 5 |
-| Game Over | A minor | 5-10 |
 
 ## File Structure
 
