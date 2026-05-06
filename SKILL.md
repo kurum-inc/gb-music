@@ -71,19 +71,6 @@ Note: polyphonic sources often produce noisy melody extraction. When pyin return
 - **Ch3 (Wave):** Bass line — root notes, walking bass
 - **Ch4 (Noise):** Percussion — hats, snare, kick, shaker
 
-### Genre Patterns
-
-| Genre | Key | Tempo | Rhythm Style |
-|-------|-----|-------|--------------|
-| Beach/Hawaiian | C or F major | 6-8 | Offbeat strum, conga |
-| Rock/Band | A minor, E minor | 4-5 | Driving 8ths, kick-snare |
-| Tropical | F major | 6-7 | Sparse, shaker |
-| Shooting | E minor | 3-4 | Aggressive, fast scales |
-| Swimming | F minor | 4 | Flowing, arpeggios |
-| Boss Battle | D minor | 3-4 | Heavy, dramatic |
-| Bowling/Funk | Eb major | 5 | Syncopated, slap bass |
-| Game Over | A minor | 5-10 | Descending, sad |
-
 ### SFX Design Patterns
 
 | Sound | Approach |
