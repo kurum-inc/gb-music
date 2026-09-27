@@ -173,6 +173,12 @@ BASS = 1      # first wave instrument
 HIHAT = 1     # first noise instrument
 SNARE = 2     # second noise instrument
 
+# Noise pitches (no subpattern): the final noise note must be 32-63.
+# 0-31 is almost silent on hardware (2-512 Hz LFSR clock); 64+ overflows into a buzzy "beeee".
+HIHAT_NOTE = 57
+SNARE_NOTE = 48
+KICK_NOTE = 40
+
 
 # === Example usage ===
 if __name__ == '__main__':
@@ -189,10 +195,10 @@ if __name__ == '__main__':
             if row % 4 == 0:
                 return C3, BASS, 0, 0
         elif track_idx == 3:  # Drums
-            if row % 4 == 0:
-                return B3, HIHAT, 0, 0
-            elif row % 8 == 4:
-                return B3, SNARE, 0, 0
+            if row % 8 == 4:
+                return SNARE_NOTE, SNARE, 0, 0
+            elif row % 4 == 0:
+                return HIHAT_NOTE, HIHAT, 0, 0
         return REST, 0, 0, 0
 
     generate_uge(
