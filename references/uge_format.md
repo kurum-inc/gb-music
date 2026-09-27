@@ -54,12 +54,39 @@ uint32  noise_counter_step     (noise only: 0=15-bit, 1=7-bit/metallic)
 ```
 int8    enabled                (0=off, 1=on)
 [64 cells × 17 bytes]:
-  uint32  note
-  uint32  jump_target (unused, write 0)
+  uint32  note         (RELATIVE offset, 36 = ±0, 90 = no change — see below)
   uint32  unused (write 0)
+  uint32  jump         (0 = none, n = jump to row n-1)
   uint32  effect_code
   uint8   effect_param
 ```
+
+Only the first 32 rows are exported; GB Studio forces a jump back to row 0 on row 31.
+The subpattern advances one row per **tick** (not per pattern row).
+
+### ⚠️ Subpattern notes are relative, not absolute
+
+hUGEDriver computes `pattern_note + (subpattern_note - 36)` on every tick
+(`do_table` in `hUGEDriver.asm`: `sub 36 ; bring the number back in the range of -36, +35`).
+So a subpattern value of 36 (C6) means "no offset", 48 (C7) means "+12", and so on.
+
+This matters most for noise drums, which are built from subpatterns
+(e.g. Tronimal's hi-hat is `[REST, G#8, G#8, ...]` = +32 over the pattern note):
+
+- **Write drum hits in the pattern as C5 (24)**, like the Tronimal examples do,
+  and shape the pitch inside the instrument's subpattern.
+- **Do not raise the pattern note to "match" the subpattern pitch.** The offsets add
+  up and the result runs past the noise table, which sounds like a buzzy "beeee"
+  instead of a drum. (Seen in practice: pattern notes D#8/C8/A8 with subpatterns
+  already at D#8/C8/A8 → broken buzz on every drum hit.)
+- Row 0 of a drum subpattern is usually REST (90) = keep the triggered note.
+
+### Length field
+
+`length` stores the hardware length-load value, not a duration. Bigger = shorter.
+- Duty / noise: sound lasts `(64 - length) / 256` s (e.g. 48 → 62 ms, 22 → 164 ms)
+- Wave: sound lasts `(256 - length) / 256` s
+- Only takes effect when `length_enabled = 1`.
 
 ## Pattern Cell Format (17 bytes)
 
@@ -122,12 +149,22 @@ With 4 rows per beat:
 
 ## Common Effects
 
+Codes follow the jump table in `hUGEDriver.asm`. Code 0 with param 0 means "no effect".
+
 | Code | Name | Param |
 |------|------|-------|
-| 0    | None | - |
-| 1    | Arpeggio | upper/lower nibble = semitones |
-| 2    | Portamento up | speed |
-| 3    | Portamento down | speed |
-| 4    | Vibrato | speed/depth |
-| 12   | Set volume | 0-F |
-| 15   | Set speed | new ticks_per_row |
+| 0 (0x0) | Arpeggio | x/y nibbles = semitones above the note (e.g. 0x47 = major chord). 0x00 = no effect |
+| 1 (0x1) | Portamento up | speed |
+| 2 (0x2) | Portamento down | speed (Tronimal kick: C6 on a wave instrument + `2 80`, `2 40`, then `E 00`) |
+| 3 (0x3) | Tone portamento | speed (slide toward the new note) |
+| 4 (0x4) | Vibrato | x = speed, y = depth |
+| 5 (0x5) | Set master volume | NR50 value (global) |
+| 7 (0x7) | Note delay | ticks |
+| 8 (0x8) | Set panning | NR51 value (global) |
+| 9 (0x9) | Set duty | duty cycle |
+| 10 (0xA) | Volume slide | x = up, y = down |
+| 11 (0xB) | Position jump | order index (global) |
+| 12 (0xC) | Set volume | channel volume / envelope |
+| 13 (0xD) | Pattern break | row (global) |
+| 14 (0xE) | Note cut | ticks (0 = cut immediately) |
+| 15 (0xF) | Set speed | new ticks_per_row (global) |

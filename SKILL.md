@@ -98,5 +98,7 @@ Expected .uge file sizes (for validation):
 - Sequence entries reference pattern keys: `sequence_pattern * 4 + track`
 - All instruments are exactly 1385 bytes (296 header + 1089 subpattern)
 - Subpattern: 1 byte enabled + 64 cells × 17 bytes
+- **Subpattern notes are relative offsets (36 = ±0), not absolute pitches.** Write noise drum hits as C5 in the pattern and shape the pitch in the instrument's subpattern; raising the pattern note makes the drums buzz ("beeee"). See `references/uge_format.md`
+- Effect codes: 1 = portamento up, 2 = portamento down, 3 = tone portamento, 0 with a non-zero param = arpeggio (full table in `references/uge_format.md`)
 - GB Studio BGM always loops — for one-shot sounds, use .sav format or stop via event
 - .sav effects use only Ch2 (pulse) and Ch4 (noise), leaving Ch1 and Ch3 free for music
