@@ -51,7 +51,7 @@ def generate_uge(filename, song_name="Untitled", artist="", comment="",
         subpattern_empty()
 
     def wave_instrument(name, vol=2, waveform_index=0):
-        """Add a Wave instrument. vol: 0=mute, 1=25%, 2=50%, 3=100%"""
+        """Add a Wave instrument. vol is the NR32 code: 0=mute, 1=100%, 2=50%, 3=25% (3 is the quietest)"""
         u32(1)  # type = wave
         sstr(name)
         u32(0); u8(0); u8(0)  # length, length_enabled, initial_volume (unused)

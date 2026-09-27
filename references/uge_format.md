@@ -44,7 +44,7 @@ uint32  freq_sweep_time        (duty only, 0=disabled)
 uint32  freq_sweep_direction   (0=up, 1=down)
 uint32  freq_sweep_shift       (0-7)
 uint8   duty_cycle             (0=12.5%, 1=25%, 2=50%, 3=75%)
-uint32  wave_output_level      (wave only: 0=mute, 1=25%, 2=50%, 3=100%)
+uint32  wave_output_level      (wave only: NR32 code — 0=mute, 1=100%, 2=50%, 3=25%. NOT ascending!)
 uint32  wave_waveform_index    (0-15)
 uint32  noise_counter_step     (noise only: 0=15-bit, 1=7-bit/metallic)
 [Subpattern]                   1089 bytes
