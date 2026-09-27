@@ -44,7 +44,7 @@ uint32  freq_sweep_time        (duty only, 0=disabled)
 uint32  freq_sweep_direction   (0=up, 1=down)
 uint32  freq_sweep_shift       (0-7)
 uint8   duty_cycle             (0=12.5%, 1=25%, 2=50%, 3=75%)
-uint32  wave_output_level      (wave only: 0=mute, 1=25%, 2=50%, 3=100%)
+uint32  wave_output_level      (wave only: NR32 code — 0=mute, 1=100%, 2=50%, 3=25%. NOT ascending!)
 uint32  wave_waveform_index    (0-15)
 uint32  noise_counter_step     (noise only: 0=15-bit, 1=7-bit/metallic)
 [Subpattern]                   1089 bytes
@@ -80,6 +80,23 @@ This matters most for noise drums, which are built from subpatterns
   instead of a drum. (Seen in practice: pattern notes D#8/C8/A8 with subpatterns
   already at D#8/C8/A8 → broken buzz on every drum hit.)
 - Row 0 of a drum subpattern is usually REST (90) = keep the triggered note.
+
+### Noise pitch range (drums)
+
+The noise channel turns the final note into NR43 with `v = 63 - note`
+(`get_note_poly` in `hUGEDriver.asm`). Only **32-63** gives usable drum sounds:
+
+| Final note | Result on hardware |
+|---|---|
+| 0-31 | LFSR clock 2-512 Hz — nearly silent / faint crackle. Drums written here are effectively missing |
+| 32-63 | Usable. Roughly kick 40-46, snare 48-54, hi-hat 56-63 |
+| 64+ | Overflows (wraps into 7-bit mode) — buzzy "beeee" |
+
+"Final note" is the pattern note, plus the subpattern offset if the instrument has one.
+Two ways that both work:
+- **No subpattern:** write the drum hit directly at 32-63 (e.g. hat 57, snare 48, kick 40)
+- **With subpattern (Tronimal style):** write the hit as C5 (24) and shape the pitch per tick in the
+  subpattern (e.g. kick `[REST, D#8, A7, D7, G6, C6, C6]` = 51 → 24)
 
 ### Length field
 
